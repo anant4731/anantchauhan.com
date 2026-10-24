@@ -35,11 +35,11 @@ Each `<section data-scene>` on the home page maps to one formation, in order. Th
 
 ## Deploy
 
-The site deploys to Vercel. DNS is at GoDaddy:
+Vercel deploys every push to `main`. DNS is at GoDaddy:
 
 | Type | Name | Value |
 | --- | --- | --- |
-| A | `@` | `76.76.21.21` |
-| CNAME | `www` | `cname.vercel-dns.com` |
+| A | `@` | the IP shown in Vercel → Settings → Domains |
+| CNAME | `www` | the target shown there (Vercel redirects `www` to the apex) |
 
-Leave the existing `portfolio` record alone: it points at the private investment portal on EC2.
+Leave the `portfolio` A record alone: it points at the private investment portal on EC2.
