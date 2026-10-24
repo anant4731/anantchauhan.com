@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# anantchauhan.com
 
-## Getting Started
+My public site: landing page, resume, projects and about. Next.js 16 (App Router, Cache Components), Tailwind v4 and a hand-written three.js particle scene. Every page is static.
 
-First, run the development server:
+## Develop
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Edit content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Everything visitors read lives in `src/content/`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| File | Feeds |
+| --- | --- |
+| `site.ts` | Name, tagline, email, social links, nav |
+| `resume.ts` | `/resume`, plus the impact numbers and timeline on the home page |
+| `projects.ts` | `/projects` and each `/projects/<slug>` case study |
 
-## Learn More
+The About page copy is in `src/app/about/page.tsx`.
 
-To learn more about Next.js, take a look at the following resources:
+`/resume` prints as a one-page A4 (the **Save as PDF** button calls `window.print()`). The phone number is deliberately not on the public site.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## The particle scene
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`src/components/scene/` holds the scene, loaded only in the browser and only on `/`:
 
-## Deploy on Vercel
+- `shapes.ts` builds the five formations: the name, network globe, galaxy, torus knot and wave grid.
+- `shaders.ts` blends between them on the GPU as you scroll, adding turbulence mid-transition, cursor repulsion and click shockwaves.
+- `particle-field.ts` handles the renderer, bloom, input and the render loop.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Each `<section data-scene>` on the home page maps to one formation, in order. The scene runs 60k particles on desktop and 26k on phones and low-core devices. With `prefers-reduced-motion` it stays still. Without WebGL2, the page shows the name as plain text.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy
+
+The site deploys to Vercel. DNS is at GoDaddy:
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `@` | `76.76.21.21` |
+| CNAME | `www` | `cname.vercel-dns.com` |
+
+Leave the existing `portfolio` record alone: it points at the private investment portal on EC2.
