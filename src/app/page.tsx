@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowIcon, GitHubIcon, LinkedInIcon, MailIcon } from "@/components/icons";
+import { Magnetic } from "@/components/magnetic";
 import { HeroScene } from "@/components/scene/hero-scene";
 import { ScrambleText } from "@/components/scramble-text";
 import { Spotlight } from "@/components/spotlight";
@@ -49,19 +50,23 @@ export default function Home() {
         />
         <p className="mt-4 max-w-xl text-lg text-balance text-foreground/80 sm:text-xl">{site.tagline}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/projects"
-            className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 font-medium text-background transition hover:bg-accent"
-          >
-            See my work
-            <ArrowIcon className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
-          <Link href="/resume" className="panel rounded-full px-5 py-2.5 font-medium transition hover:border-white/30">
-            Resume
-          </Link>
+          <Magnetic>
+            <Link
+              href="/projects"
+              className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 font-medium text-background transition hover:bg-accent"
+            >
+              See my work
+              <ArrowIcon className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </Magnetic>
+          <Magnetic>
+            <Link href="/resume" className="panel inline-block rounded-full px-5 py-2.5 font-medium transition hover:border-white/30">
+              Resume
+            </Link>
+          </Magnetic>
         </div>
         <p className="float-hint mt-12 font-mono text-[11px] tracking-widest text-muted uppercase">
-          scroll · or click anywhere
+          scroll fast · click · hold to open a black hole
         </p>
       </section>
 
@@ -169,18 +174,24 @@ export default function Home() {
             I&apos;m always happy to talk about distributed systems, LLM tooling or an interesting role.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a
-              href={`mailto:${site.email}`}
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 font-medium text-background transition hover:bg-accent"
-            >
-              <MailIcon className="size-4" /> Email me
-            </a>
-            <a href={site.links.linkedin} className="panel inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-medium transition hover:border-white/30">
-              <LinkedInIcon className="size-4" /> LinkedIn
-            </a>
-            <a href={site.links.github} className="panel inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-medium transition hover:border-white/30">
-              <GitHubIcon className="size-4" /> GitHub
-            </a>
+            <Magnetic>
+              <a
+                href={`mailto:${site.email}`}
+                className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 font-medium text-background transition hover:bg-accent"
+              >
+                <MailIcon className="size-4" /> Email me
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <a href={site.links.linkedin} className="panel inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-medium transition hover:border-white/30">
+                <LinkedInIcon className="size-4" /> LinkedIn
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <a href={site.links.github} className="panel inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-medium transition hover:border-white/30">
+                <GitHubIcon className="size-4" /> GitHub
+              </a>
+            </Magnetic>
           </div>
         </div>
       </section>

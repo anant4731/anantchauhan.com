@@ -55,6 +55,7 @@ export function HeroScene() {
         field = new ParticleField(canvas, {
           count: reducedMotion ? 18000 : small ? 26000 : 60000,
           reducedMotion,
+          lite: small,
           fontFamily,
           getProgress: sceneProgress,
         });

@@ -57,8 +57,10 @@ uniform float uPixelRatio;
 uniform float uSize;
 uniform float uIntensity;
 uniform vec3 uShift[5];
+uniform float uWarp;
 uniform vec3 uMouse;
-uniform vec3 uShock;
+uniform vec4 uShock;
+uniform vec4 uWell;
 uniform vec3 uColorA;
 uniform vec3 uColorB;
 
@@ -124,10 +126,25 @@ void main() {
   vec3 q = pos * 0.12 + vec3(0.0, 0.0, t * 0.12);
   vec3 n = vec3(snoise(q), snoise(q + 17.3), snoise(q + 41.7));
   pos += n * (0.1 + storm * 3.2);
+  // Hyperspace: mid-morph, particles rush at the camera and past it.
+  pos.z += storm * (aRand - 0.2) * 16.0;
 
   float ip = clamp(uIntro * 1.45 - aRand * 0.45, 0.0, 1.0);
   ip = 1.0 - pow(1.0 - ip, 4.0);
   pos = mix(aScatter, pos, ip);
+
+  // Scrolling fast streaks everything towards the camera: warp speed.
+  pos.z += uWarp * (2.0 + aRand * 16.0);
+
+  // Holding the mouse opens a black hole: particles spiral in, inner ones
+  // faster, and pile up in an accretion disc around a dark event horizon.
+  vec2 dw = pos.xy - uWell.xy;
+  float wd = length(dw);
+  float pull = uWell.z * smoothstep(15.0, 0.0, wd);
+  vec2 dir = rot(pull * uWell.w / (0.6 + wd * 0.18)) * (dw / max(wd, 0.001));
+  float disc = 1.8 + pow(aRand, 2.2) * 6.0;
+  pos.xy = uWell.xy + dir * mix(wd, disc, pull);
+  pos.z = mix(pos.z, (aRand - 0.5) * 0.8, pull);
 
   // The cursor pushes particles away and towards the camera.
   vec2 dm = pos.xy - uMouse.xy;
@@ -136,26 +153,34 @@ void main() {
   pos.xy += (dm / max(md, 0.001)) * push * 2.4;
   pos.z += push * 3.0;
 
-  // A click sends a shockwave ring out from the click point.
+  // A click sends a shockwave ring out from the click point; releasing a
+  // black hole sends a much bigger one (uShock.w is its power).
   float st = uTime - uShock.z;
-  if (st >= 0.0 && st < 3.5) {
+  float wave = 0.0;
+  if (st >= 0.0 && st < 4.0) {
     vec2 ds = pos.xy - uShock.xy;
     float sd = length(ds);
-    float wave = exp(-pow((sd - st * 16.0) * 0.45, 2.0)) * exp(-st * 1.1);
+    wave = exp(-pow((sd - st * (16.0 + uShock.w * 6.0)) * 0.42, 2.0)) * exp(-st * 1.1) * uShock.w;
     pos.xy += (ds / max(sd, 0.001)) * wave * 3.0;
     pos.z += wave * 4.0;
   }
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = uSize * aSize * uPixelRatio * (36.0 / -mv.z);
+  gl_PointSize = min(uSize * aSize * uPixelRatio * (36.0 / -mv.z), 24.0 * uPixelRatio);
 
   float grad = clamp((pos.x + pos.y * 0.6) / 40.0 + 0.5 + (aRand - 0.5) * 0.35, 0.0, 1.0);
   vColor = mix(uColorA, uColorB, grad);
   vColor = mix(vColor, vec3(1.0), smoothstep(0.93, 1.0, aRand) * 0.8);
+  // White-hot shock fronts, and an orange glow around the black hole.
+  vColor = mix(vColor, vec3(1.0), clamp(wave, 0.0, 1.0) * 0.7);
+  vColor = mix(vColor, vec3(1.0, 0.62, 0.32), pull * 0.65);
 
   float twinkle = 0.7 + 0.3 * sin(t * (0.8 + aRand * 2.5) + aRand * 60.0);
   vAlpha = twinkle * uIntensity * (0.55 + storm * 0.25) * (0.35 + 0.65 * ip);
+  vAlpha *= 1.0 + pull * 0.6 + wave * 0.8;
+  // Fade particles that fly right up to the lens instead of flashing the screen.
+  vAlpha *= smoothstep(1.5, 9.0, -mv.z);
 }
 `;
 

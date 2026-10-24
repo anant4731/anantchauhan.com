@@ -40,6 +40,68 @@ body {
   border-radius: 6px;
 }
 
+/* Holding the mouse opens a black hole on the home page; don't select text. */
+.is-holding,
+.is-holding * {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing !important;
+}
+
+/* Cursor ring (see <CursorRing>). The outer div follows the mouse; the
+   inner span does the scaling so the two transforms don't fight. */
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  mix-blend-mode: difference;
+}
+.cursor-ring[data-visible="true"] {
+  opacity: 1;
+}
+.cursor-ring span {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 9999px;
+  border: 1.5px solid rgb(255 255 255 / 0.85);
+  box-shadow: 0 0 18px rgb(94 234 212 / 0.5);
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4),
+    background-color 0.25s;
+}
+.cursor-ring[data-hover="true"] span {
+  transform: scale(1.9);
+  background: rgb(255 255 255 / 0.95);
+}
+.cursor-ring[data-down="true"] span {
+  transform: scale(0.6);
+}
+.is-holding .cursor-ring span {
+  transform: scale(2.6);
+  border-style: dashed;
+  border-width: 2px;
+  animation: ring-spin 0.9s linear infinite;
+}
+@keyframes ring-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Magnetic buttons spring back when the cursor leaves. */
+.magnetic {
+  transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+.magnetic:hover {
+  transition: transform 0.12s linear;
+}
+
 /* Gradient text for accent words. */
 .text-gradient {
   background: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 55%, #f472b6 100%);
